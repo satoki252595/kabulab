@@ -1,12 +1,11 @@
 import yfinance as yf
 import pandas as pd
-import re
-import urllib.request
-import tabula
+import time
 
 
 def get_stock_data(ticker):
     stock = yf.Ticker(ticker)
+    time.sleep(0.1)  # 0.1秒スリープ
     hist = stock.history(period="3mo")
     return hist
 

@@ -67,7 +67,7 @@ def createNotionUpDataFrame(codeList: list) -> pd.core.frame.DataFrame:
             'operating_profit_margin': stockInfo['財務情報']['営業利益率'].iloc[0],
             'roe': stockInfo['基本情報']['ROE'],
             'countOperatingProfitMargin': [countOperatingProfitMargin(stockInfo)],
-            'score': [countOperatingProfitMargin(stockInfo) * calAvgRevenueGrowthRate(stockInfo)]
+            'score': [abs(countOperatingProfitMargin(stockInfo) * calAvgRevenueGrowthRate(stockInfo))]
         }
 
         df = pd.DataFrame(data)
