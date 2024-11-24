@@ -5,9 +5,10 @@ import time
 
 def get_stock_data(ticker):
     stock = yf.Ticker(ticker)
-    time.sleep(0.1)  # 0.1秒スリープ
+    time.sleep(1)  # 1秒スリープ
     hist = stock.history(period="3mo")
-    return hist
+    
+    return stock,hist
 
 
 def is_perfect_order(hist) -> bool:
@@ -18,23 +19,25 @@ def is_perfect_order(hist) -> bool:
     return (ma5.iloc[-1] > ma10.iloc[-1] > ma20.iloc[-1] > ma60.iloc[-1])
 
 
-def screen_stocks(tickers) -> list:
+def screen_stocks(tickers:list) -> list:
     screened_stocks = []
     for ticker in tickers:
-        hist = get_stock_data(ticker)
-        if len(hist) < 60:
-            continue
-        avg_volume_1w = hist['Volume'].rolling(window=5).mean().iloc[-1]
-        avg_volume_1m = hist['Volume'].rolling(window=20).mean().iloc[-1]
-        stock = yf.Ticker(ticker)
-        market_cap = stock.info.get('marketCap')
+        try:
+            stock,hist = get_stock_data(ticker)
+            if len(hist) < 60:
+                continue
+            avg_volume_1w = hist['Volume'].rolling(window=5).mean().iloc[-1]
+            avg_volume_1m = hist['Volume'].rolling(window=20).mean().iloc[-1]
+            market_cap = stock.info.get('marketCap')
 
-        if avg_volume_1w > 1.5 * avg_volume_1m and is_perfect_order(hist) and market_cap < 50000000000:
-            screened_stocks.append(ticker)
+            if avg_volume_1w > 1.5 * avg_volume_1m and is_perfect_order(hist) and market_cap < 50000000000:
+                screened_stocks.append(ticker)
+        except:
+            print(f"Error: {ticker}")
     return screened_stocks
 
 
 if __name__ == '__main__':
-    codeList = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'FB']
-    df = createNotionUpDataFrame(codeList)
+    codeList = ['3089.T','3169.T', '2337.T']
+    df = screen_stocks(codeList)
     print(df)
