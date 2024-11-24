@@ -1,0 +1,7 @@
+*.env
+*.xbrl
+*/edinet/*
+*/work/*
+*/.vscode/*
+*/.ipynb_checkpoints/*
+*/.pytest_cache/*
