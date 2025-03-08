@@ -38,6 +38,6 @@ def screen_stocks(tickers:list) -> list:
 
 
 if __name__ == '__main__':
-    codeList = ['3089.T','3169.T', '2337.T']
+    codeList = ['3393.T']
     df = screen_stocks(codeList)
     print(df)
