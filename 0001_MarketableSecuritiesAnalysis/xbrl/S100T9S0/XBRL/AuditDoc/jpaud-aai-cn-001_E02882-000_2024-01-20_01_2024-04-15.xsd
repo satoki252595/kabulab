@@ -1,0 +1,20 @@
+﻿<?xml version="1.0"?>
+<!-- XBRL Document Created with WizLabo Platform -->
+<schema xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:nonnum="http://www.xbrl.org/dtr/type/non-numeric" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:jpaud-aai-cn_E02882-000="http://disclosure.edinet-fsa.go.jp/jpaud/aai/cn/001/E02882-000/2024-01-20/01/2024-04-15" elementFormDefault="qualified" targetNamespace="http://disclosure.edinet-fsa.go.jp/jpaud/aai/cn/001/E02882-000/2024-01-20/01/2024-04-15" xmlns="http://www.w3.org/2001/XMLSchema">
+  <import schemaLocation="http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2022-11-01/jpcrp_cor_2022-11-01.xsd" namespace="http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2022-11-01/jpcrp_cor" />
+  <import schemaLocation="http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2022-11-01/jpcrp_rt_2022-11-01.xsd" namespace="http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2022-11-01/jpcrp_rt" />
+  <import schemaLocation="http://www.xbrl.org/dtr/type/nonNumeric-2009-12-16.xsd" namespace="http://www.xbrl.org/dtr/type/non-numeric" />
+  <import schemaLocation="http://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd" namespace="http://www.xbrl.org/2003/instance" />
+  <annotation>
+    <appinfo>
+      <link:linkbaseRef xlink:type="simple" xlink:href="http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2022-11-01/label/jpcrp_2022-11-01_lab.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" />
+      <link:linkbaseRef xlink:type="simple" xlink:href="http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2022-11-01/label/jpcrp_2022-11-01_lab-en.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" />
+      <link:linkbaseRef xlink:type="simple" xlink:href="http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2022-11-01/label/jpcrp_2022-11-01_gla.xml" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" />
+      <link:linkbaseRef xlink:type="simple" xlink:href="jpaud-aai-cn-001_E02882-000_2024-01-20_01_2024-04-15_pre.xml" xlink:role="http://www.xbrl.org/2003/role/presentationLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" />
+      <link:linkbaseRef xlink:type="simple" xlink:href="jpaud-aai-cn-001_E02882-000_2024-01-20_01_2024-04-15_def.xml" xlink:role="http://www.xbrl.org/2003/role/definitionLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" />
+      <link:linkbaseRef xlink:type="simple" xlink:href="jpaud-aai-cn-001_E02882-000_2024-01-20_01_2024-04-15_lab.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" />
+      <link:linkbaseRef xlink:type="simple" xlink:href="jpaud-aai-cn-001_E02882-000_2024-01-20_01_2024-04-15_lab-en.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" />
+    </appinfo>
+  </annotation>
+  <element id="jpaud-aai-cn_E02882-000_FeeRelatedInformationNonConsolidatedTextBlock" xbrli:periodType="instant" abstract="false" name="FeeRelatedInformationNonConsolidatedTextBlock" nillable="true" substitutionGroup="xbrli:item" type="nonnum:textBlockItemType" />
+</schema>
