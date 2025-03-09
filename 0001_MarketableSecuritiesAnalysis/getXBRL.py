@@ -123,21 +123,41 @@ def get_year_from_context(context_str, periodEnd_date):
     context の文字列に含まれるキーワードに基づいて、
     対象期を periodEnd から何年前か計算し、'YYYY' 形式で返す。
     """
+    year_diff = 0
+    
     if "CurrentYear" in context_str:
-        target_date = periodEnd_date
+        year_diff = 0
     elif "Prior1Year" in context_str:
-        target_date = periodEnd_date.replace(year=periodEnd_date.year - 1)
+        year_diff = 1
     elif "Prior2Year" in context_str:
-        target_date = periodEnd_date.replace(year=periodEnd_date.year - 2)
+        year_diff = 2
     elif "Prior3Year" in context_str:
-        target_date = periodEnd_date.replace(year=periodEnd_date.year - 3)
+        year_diff = 3
     elif "Prior4Year" in context_str:
-        target_date = periodEnd_date.replace(year=periodEnd_date.year - 4)
+        year_diff = 4
     else:
         # 対象外の場合は None を返す
         return None
     
-    return target_date.strftime("%Y")
+    try:
+        # 年だけを変更し、月と日はそのまま
+        target_date = periodEnd_date.replace(year=periodEnd_date.year - year_diff)
+        return target_date.strftime("%Y")
+    except ValueError:
+        # 日付が存在しない場合（例：2/29 → 2/28）
+        # 月の最終日を使用
+        if periodEnd_date.month == 2 and periodEnd_date.day == 29:
+            # 2月の場合、その年の2月の最終日を取得
+            if year_diff > 0:
+                year = periodEnd_date.year - year_diff
+                # 2月の最終日を決定（閏年かどうかで28日か29日）
+                last_day = 29 if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) else 28
+                target_date = date(year, 2, last_day)
+                return target_date.strftime("%Y")
+        
+        # それ以外の月の場合や他のエラーの場合は、月の初日を返す
+        target_date = date(periodEnd_date.year - year_diff, periodEnd_date.month, 1)
+        return target_date.strftime("%Y")
 
 def is_non_consolidated(context_str):
     """
@@ -428,13 +448,14 @@ def getEdinetCodeMapping():
     dfs = asyncio.run(download_edinet_file())
     dfs_tmp = dfs['EdinetcodeDlInfo.csv']
     df = dfs_tmp[dfs_tmp['上場区分']=='上場']
-    df.loc[:, '証券コード'] = df['証券コード'].str.rstrip('0')
+    df.loc[:, '証券コード'] = df['証券コード'].apply(lambda x: re.sub('0$', '', x) if isinstance(x, str) else x)
     
     return df
 
 if __name__=='__main__':
     
     # 2024年の1月1日から始める
+    
     YYYY = 2024
     start_date = date(YYYY, 4, 11)
     
