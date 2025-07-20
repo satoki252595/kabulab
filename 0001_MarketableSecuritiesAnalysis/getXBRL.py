@@ -15,7 +15,11 @@ import pandas as pd
 from arelle import Cntlr
 
 
-load_dotenv()
+# 1つ上のディレクトリにある.envファイルをロードして環境変数を読み込む
+import os.path
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')
+load_dotenv(dotenv_path)
+
 EDINET_API_KEY = os.getenv('EDINET_API_KEY')
 
 def get_documents_by_date(target_date, doc_type='030000'):
@@ -456,8 +460,8 @@ if __name__=='__main__':
     
     # 2024年の1月1日から始める
     
-    YYYY = 2024
-    start_date = date(YYYY, 4, 11)
+    YYYY = 2025
+    start_date = date(YYYY, 3, 1)
     
     df_EdinetCodeMapping = getEdinetCodeMapping()
     

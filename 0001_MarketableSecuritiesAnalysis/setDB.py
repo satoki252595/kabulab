@@ -25,7 +25,7 @@ COLLECTION_NAME = 'collection'
 if __name__ == '__main__':
     
     # 2024年の1月1日から始める
-    start_date = date(2024, 4, 11)
+    start_date = date(2025, 6, 24)
     
     df_EdinetCodeMapping = getEdinetCodeMapping()
     

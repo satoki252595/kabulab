@@ -1,0 +1,9 @@
+metric,value,unit
+total_companies_processed,969.0,companies
+success_rate,96.89999999999999,%
+average_extraction_rate,8.258361094914951,%
+net_sales_success_rate,91.74406604747162,%
+operating_income_success_rate,91.22807017543859,%
+total_assets_success_rate,100.0,%
+net_assets_success_rate,100.0,%
+data_accuracy_rate,100.0,%
