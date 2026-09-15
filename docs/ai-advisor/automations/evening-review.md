@@ -24,7 +24,9 @@
 
 手順の正本はこのリポジトリの `.cursor/skills/ai-advisor-evening-review/SKILL.md` です。最初に必ず全文を読み、その順序（§1 対象利用者 → §2 判断日 → §3 追跡 → §4 検査 → §5 振り返り行 → §6 草案ルール → §7 転記 → §8 自己検査 → §9 実行サマリー）どおりに実行してください。あわせて `docs/ai-advisor/guardrails.md`、`docs/ai-advisor/notion-schema.md`、`docs/ai-advisor/reference-data.md` を読みます。
 
-固定値: Notion 親ページ https://app.notion.com/p/3dad74ff84cd80c4956feaf9255de7e1 。8 つの DB は親ページの子を名前で解決します。名前やプロパティ名が notion-schema.md と合わないときは何も書かず、実行サマリーに理由を書いて終了してください。時刻は JST、実行IDは YYYYMMDD-HHMM-夕振り返り。
+固定値: Notion 親ページ https://app.notion.com/p/3dad74ff84cd80c4956feaf9255de7e1 。8 つの DB は親ページの子を名前で解決し、notion-schema.md §1・§2 の ID と突き合わせます。名前やプロパティ名が notion-schema.md と合わないときは何も書かず、実行サマリーに理由を書いて終了してください。時刻は JST、実行IDは YYYYMMDD-HHMM-夕振り返り。
+
+構築時の差異への防御（notion-schema.md §3.1）: 日次タスク.状態 の「レポート済」は仕様名を第一に、無ければ Complete グループの選択肢（現状 完了）で読む。対象日・判断日 の日付フィルタはビューに頼らず自分で掛ける。タスク名 が「テンプレート｜」「例｜」で始まる行は除く。
 
 Notion の読み書きは Notion MCP を使います。MCP が使えないときだけ NOTION_TOKEN で REST API を呼びます（値は出力しない）。観点「価格条件」「直近開示」の切片はシェル（curl + jq）で取り、切ってから読み、書いたら捨てます。
 

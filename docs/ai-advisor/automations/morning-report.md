@@ -24,7 +24,9 @@
 
 手順の正本はこのリポジトリの `.cursor/skills/ai-advisor-morning-report/SKILL.md` です。最初に必ず全文を読み、その順序（§1 起動時に読むもの → §3 ルール整理 → §4 準備 → §5 実行 → §9 実行サマリー）どおりに実行してください。あわせて `docs/ai-advisor/guardrails.md`、`docs/ai-advisor/notion-schema.md`、`docs/ai-advisor/reference-data.md`、`.cursor/skills/ai-advisor-morning-report/references/jp-holidays.md` を読みます。
 
-固定値: Notion 親ページ https://app.notion.com/p/3dad74ff84cd80c4956feaf9255de7e1 。8 つの DB（専属エキスパート / ルール / 分析観点 / 参照資産 / 銘柄 / 日次タスク / 判断 / 振り返り）は親ページの子を名前で解決します。名前が揃わない・プロパティ名が notion-schema.md と合わないときは何も書かず、実行サマリーに理由を書いて終了してください。時刻は JST、実行IDは YYYYMMDD-HHMM-朝レポート。営業日は月〜金で祝日（jp-holidays.md）と 12/31〜1/3 を除く。判定できない日は営業日とみなす。
+固定値: Notion 親ページ https://app.notion.com/p/3dad74ff84cd80c4956feaf9255de7e1 。8 つの DB（専属エキスパート / ルール / 分析観点 / 参照資産 / 銘柄 / 日次タスク / 判断 / 振り返り）は親ページの子を名前で解決し、notion-schema.md §1・§2 の ID と突き合わせます。保存ビュー: 自動化_実行待ち https://app.notion.com/p/a9f3f6c7ce74414f92e4ddbffa63b7b9?v=3dcd74ff84cd811e8d6f000c9ea61ab9 、自動化_有効観点 https://app.notion.com/p/8a94dc4cef3a41c9ba8a5ed6ff157cf7?v=3dcd74ff84cd81d0a1b4000cd8614ef9 。名前が揃わない・プロパティ名が notion-schema.md と合わないときは何も書かず、実行サマリーに理由を書いて終了してください。時刻は JST、実行IDは YYYYMMDD-HHMM-朝レポート。営業日は月〜金で祝日（jp-holidays.md）と 12/31〜1/3 を除く。判定できない日は営業日とみなす。
+
+構築時の差異への防御（notion-schema.md §3.1）: 日次タスク.状態 の選択肢は仕様名（未着手／不足／実行中／レポート済）を第一に使い、無ければグループで解決する（In progress の選択肢＝実行中、Complete の選択肢＝レポート済。不足 が無い間は 未着手 のまま 実行メモ の先頭に「不足:<コード>」を書き、次のランで再評価する）。自動化_実行待ち ビューのフィルタを信用しきらず、読んだ後に 対象日 ≤ 当日（空は可）と状態を自分で確かめ、タスク名 が「テンプレート｜」「例｜」で始まる行は除く。どの名前で解決したかを実行サマリーに書く。
 
 Notion の読み書きは Notion MCP を使います。MCP が使えないときだけ環境変数 NOTION_TOKEN で REST API を呼びます（値は絶対に出力しない）。外部データはシェルで `curl -sS -m 30 "<URL>" | jq -c '<射影・件数制限>'` の形で取得し、切ってから読みます。
 
