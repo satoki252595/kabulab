@@ -1,0 +1,7 @@
+# Copy to .dev.vars (gitignored). Never commit real secret values.
+# Notion database_id / data_source_id are in wrangler.jsonc vars (not secrets).
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+SESSION_SECRET=replace-with-a-long-random-string
+NOTION_TOKEN=
+YEN_STORE_SECRET=

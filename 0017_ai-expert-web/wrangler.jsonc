@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ai-expert-web",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ai-expert-web",
+      "database_id": "00000000-0000-4000-8000-000000000001"
+    }
+  ],
+  "vars": {
+    "PUBLIC_DATA_BASE": "https://kabulab-cf.satoki252595.workers.dev",
+    "NOTION_PARENT_PAGE_NAME": "AI投資エージェント",
+    "NOTION_PARENT_PAGE_ID": "3ddd74ff-84cd-8178-9abb-cf86708626c0",
+    "NOTION_AGENT_DB_ID": "0bbeee51-024a-4930-937e-e27390c12572",
+    "NOTION_AGENT_DS_ID": "f716eb85-55d8-4989-8693-575ed3a77387",
+    "NOTION_RULE_DB_ID": "ebe48548-1475-4139-9fed-d9becc1aefe2",
+    "NOTION_RULE_DS_ID": "517560c4-ff55-4524-a8f9-374e6d534d7c",
+    "NOTION_JOB_DB_ID": "dd841447-06d0-4385-811e-ee52abf3185e",
+    "NOTION_JOB_DS_ID": "c8e1c2a2-18e2-4fcc-b853-927ee8975ec9",
+    "NOTION_DECISION_DB_ID": "64bbb3ed-1a36-4d0b-8d4f-25f44ea219da",
+    "NOTION_DECISION_DS_ID": "22d332de-be5e-4193-9280-c509262c7629",
+    "NOTION_REVIEW_DB_ID": "f6553c22-36d6-40de-a0c1-a38adc178790",
+    "NOTION_REVIEW_DS_ID": "cc35ddd1-7c2d-4678-9476-9cb1a6ae9a36"
+  }
+}
