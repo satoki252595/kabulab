@@ -13,7 +13,7 @@
 | `personal-only` | Yahoo 由来（株価・出来高・OHLCV・5 分足・PER/PBR/配当利回り/時価総額・RSI 等・スコア）、JPX 由来（`market`・JPX 業種・`instrument_type`）、日証金/JPX 由来（信用残高） | **値を書かない**。ルール条件に対する `成立／未成立` と「参照資産『名称』で確認（値は転記しない）」だけ。読んで判定に使うことは可 |
 | `no-store` | みんかぶ由来の優待掲載原文（`yutai_benefits.description`） | 参照資産に載せない。読まない。どこにも書かない |
 
-補足: 業種を書くなら EDINET 由来の 33 業種だけ。`market` は書かない。実在銘柄コードと区分の対応表を作らない。`sector` が空の銘柄は `見ない領域` の判定を `確認不能` にする（除外しない）。
+補足: 業種を書くなら EDINET 由来の 33 業種だけ。`market` は書かない。実在銘柄コードと区分の対応表を作らない。`sector` が空の銘柄は `見ない領域` の **業種一致** を `確認不能` にする（除外しない）。ただし IR 表題/タグの `監理銘柄` `整理銘柄` `上場廃止`、および `見ない領域` テキストの表題/タグ部分一致は宇宙外として落とす／見送り（朝スキル §0.1）。
 
 ## 2. 参照資産の既定行（schema-spec §8.4。運営が `参照資産` DB に登録）
 
@@ -53,7 +53,7 @@ curl -sS -m 30 "<URL>" | python3 -c 'import json,sys; d=json.load(sys.stdin); pr
 rm -f /tmp/axis-*.json   # 観点を終えたら
 ```
 
-取得失敗（HTTP ≠ 200、タイムアウト 30 秒、JSON 不正、期待フィールド欠落）→ 1 回だけ再試行 → それでも失敗なら寄与 `確認不能`、根拠に `到達不能 <HTTPコード>`。**不足にはしない。**
+取得失敗（HTTP 5xx、タイムアウト 30 秒、JSON 不正、期待フィールド欠落）→ 1 回だけ再試行 → それでも失敗なら寄与 `確認不能`、根拠に `到達不能 <HTTPコード>`。**不足にはしない。** 対象コードの **HTTP 404** または **`points[]` / `disclosures[]` / `bars[]` が空** は到達不能ではなく **`データ不足`**（朝スキル §0.1-7・`DATA_MISSING`）。`hasStructuredData` や ping だけでは分析にしない。
 
 ## 4. 観点 → 取得の対応（automation-spec §6。既定の共通観点）
 
@@ -64,17 +64,17 @@ rm -f /tmp/axis-*.json   # 観点を終えたら
 | 受注トレンド | `curl -sS -m 30 "$B/yuho-quant/api/screening?metric=orders&minYears=3&limit=30"` | `.rows[] \| {code,name,sector,years,latestOrdersYen,latestBacklogYen,ordersCagr,backlogCagr,ordersYoy,backlogYoy,hasYearGap}` | commercial-ok → 数値可 |
 | 海外売上比率 | `curl -sS -m 30 "$B/yuho-quant/api/screening-overseas?minYears=3&limit=30"` | `.rows[] \| {code,name,sector,years,latestRatioPct,ratioChangePp,overseasCagr,overseasYoy}` | commercial-ok |
 | 優待・還元（既定 OFF） | `curl -sS -m 30 "$B/otakara-yutai/api/screening?limit=30&sort=total&order=desc[&perMax=&pbrMax=&yieldMin=]"` | `.items[] \| {code,name,sector,benefitMonths,genres,benefitSummary: .benefitSummary[0:80]}`（`price/per/pbr/yield/rsi14/score` は絞り込み判定にだけ使い、出力に含めない） | factual-cite（優待内容）／personal-only（数値）→ 数値は書かない |
-| 受注・海外の推移 | `curl -sS -m 30 "$B/yuho-quant/api/trend/{code}"` | `{stock:{code,name,sector}, docs:[.documents[] \| {periodEnd,parseStatus}][0:10], points, hasStructuredData}` | commercial-ok。`hasStructuredData=false` → 確認不能 |
-| 開示の流れ | `curl -sS -m 30 "$B/ir-catalog/api/stock/{code}"` | `[.disclosures[] \| select(.pubdate >= "<12ヶ月前>") \| {pubdate,title,primaryTag,tags,pdfSentiment,documentUrl}][0:30]` | factual-cite → 日付・表題・タグ＋URL。PDF 本文は転載しない |
+| 受注・海外の推移 | `curl -sS -m 30 "$B/yuho-quant/api/trend/{code}"` | `{stock:{code,name,sector}, n_points:(.points\|length), points, docs:[.documents[] \| {periodEnd,parseStatus}], hasStructuredData}`。**`points[]` の中身を読む**（`hasStructuredData` や件数だけは不可） | commercial-ok。`points` 空または 404 → `データ不足`（`DATA_MISSING:系列`）。`hasStructuredData=false` かつ `points` 空も同じ |
+| 開示の流れ | `curl -sS -m 30 "$B/ir-catalog/api/stock/{code}"` | `{n:(.disclosures\|length), titles:[.disclosures[] \| {pubdate,title,primaryTag,tags}]}`。**表題全件**（先頭 3 件・`[0:30]` で終わらせない）。PDF は含めない | factual-cite → 日付・表題・タグ。404 / `n=0` → `データ不足`（`DATA_MISSING:IR`）。不利語・宇宙外語は表題/タグで判定 |
 | 一次情報（重） | 開示の流れの `documentUrl`（決算短信）と EDINET の直近有報。PDF → テキスト化し `節=` の見出しで抜く | 各文書 ≤2、節ごと ≤3000 字 | EDINET commercial-ok／TDnet factual-cite |
 | 株主還元・優待（既定 OFF） | お宝優待の一覧から `code` 一致を抽出（ページング ≤3 回で見つからなければ確認不能） | `{benefitMonths,genres,benefitSummary}` | factual-cite |
 | 企業分析の継承 | Notion: 同じ利用者×銘柄の直近 `企業分析` タスク（レポート済）の `## 統合` 節と判断行 | ≤600 字 | — |
-| 価格条件 | `curl -sS -m 30 "$B/vwap-analysis/api/daily?code={code}"` | `{updated, splits, bars: (.bars[-120:] \| map({date,c,v,adj}))}`。`bars` が空なら `確認不能`。基準日は最終 `date`（月水金更新・最大 2 営業日遅れ） | personal-only → 成立／未成立のみ。値を書かない |
-| 需給 | `curl -sS -m 30 "$B/vwap-analysis/api/margin?code={code}&n=8"` | `.weeks[] \| {week,buy,sell,buy_chg,sell_chg}`。基準日は最新 `week`（土曜更新） | personal-only → 成立／未成立のみ |
-| 直近開示 | `curl -sS -m 30 "$B/ir-catalog/api/stock/{code}"` | `[.disclosures[] \| select(.pubdate >= "<30日前>") \| {pubdate,title,primaryTag,documentUrl}][0:10]` | factual-cite |
+| 価格条件 | `curl -sS -m 30 "$B/vwap-analysis/api/daily?code={code}"` | `{updated, splits, n:(.bars\|length), bars: (.bars[-120:] \| map({date,c,v,adj}))}`。`bars` が空または 404 なら `データ不足`（`DATA_MISSING:系列`）。基準日は最終 `date`（月水金更新・最大 2 営業日遅れ） | personal-only → 成立／未成立のみ。値を書かない |
+| 需給 | `curl -sS -m 30 "$B/vwap-analysis/api/margin?code={code}&n=8"` | `.weeks[] \| {week,buy,sell,buy_chg,sell_chg}`。基準日は最新 `week`（土曜更新）。空なら需給は `確認不能`（価格系列の `DATA_MISSING` とは別） | personal-only → 成立／未成立のみ |
+| 直近開示 | `curl -sS -m 30 "$B/ir-catalog/api/stock/{code}"` | `{n:(.disclosures\|length), titles:[.disclosures[] \| select(.pubdate >= "<30日前>") \| {pubdate,title,primaryTag,tags}]}`。30 日窓は **全件**（`[0:10]` で終わらせない） | factual-cite。空/404 は `DATA_MISSING:IR` |
 | サイズと破綻条件 | Notion: 専属の `1銘柄あたり金額`・`許容損失`・`低確信度のサイズ`、ルール IF-THEN | — | 金額で提案。価格の値を使う計算は式だけ示す |
 | 反証 | 本文の観点の節の要約のみ | — | — |
-| 制約と既判断 | Notion: 専属の `見ない領域`・`ウォッチ上限`、`判断`（利用者、90 日） | 過去判断 ≤20 行。`sector` が空の銘柄は `見ない領域` 判定を `確認不能`（除外しない） | — |
+| 制約と既判断 | Notion: 専属の `見ない領域`・`ウォッチ上限`、`判断`（利用者、90 日）。残す候補は IR Catalog の表題/タグ | 過去判断 ≤20 行。業種は `sector` 部分一致（空は `確認不能` で除外しない）。宇宙外語（監理/整理/上場廃止）と `見ない領域` テキストは IR 表題/タグでも照合して落とす | — |
 | （銘柄名の解決） | #4 `name`／#3 `stock.name`、無ければ `curl -sS -m 30 <stocks.json raw> \| jq -c '.stocks[] \| select(.[0]=="{code}")'` | 1 件だけ。`market` は書かない | commercial-ok（name） |
 
 ## 5. 後日の選択肢: D1 REST（シークレットが必要・任意）
